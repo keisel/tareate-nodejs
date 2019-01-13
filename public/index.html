@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>Programa de Colas</title>
+</head>
+
+<body>
+    <h1>Programa de Colas</h1>
+    <form ref='uploadForm' id='uploadFor' action='http://localhost:3000/tarea' method='post' encType="multipart/form-data">
+        <input type="file" name="tarea" />
+        <input type="text" name="titulo" />
+        <input type="text" name="fechaEntrega" />
+        <input type="text" name="descripcion" />
+        <input type="text" name="usuario" />
+        <input type="text" name="categoria" />
+        <input type='submit' value='Upload!' />
+    </form>
+
+    <form ref='uploadForm' id='uploadForm' action='http://localhost:3000/descarga' method='post' encType="multipart/form-data">
+        <input type="file" name="tarea" />
+        <input type="text" name="titulo" />
+        <input type="text" name="descripcion" />
+        <input type='submit' />
+    </form>
+    </div>
+
+</body>
+
+</html>

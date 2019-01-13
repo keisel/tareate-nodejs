@@ -1,0 +1,68 @@
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+    <meta charset="UTF-8">
+    <title>Inicio de Sesión</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link rel="stylesheet" type="text/css" href="assets/css/bootstrap.css">
+    <link rel="icon" type="image/png" href="assets/iproelec/icon.png" sizes="196x196">
+    <link rel="stylesheet" type="text/css" href="assets/css/estilos.css">
+    <meta name="google-signin-client_id" content="378657558154-akllgo7g3i6h2uv6flgqkb73icjcapog.apps.googleusercontent.com">
+
+    <style>
+        body {
+            padding-top: 100px;
+            background: rgb(224, 224, 224);
+        }
+        
+        #button {
+            background-color: #E55439;
+            color: #fff;
+            font-weight: 600;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="container-fluid">
+        <div class="row ">
+            <div class="col-xs-6 col-xs-offset-3 " id="container">
+                <img src="assets/iproelec/iproelec.png" class="img-responsive" id="avatar">
+                <h1 id="center">SIGSMART</h1>
+                <form class="login" method="POST">
+                    <div class="form-group">
+                        <h4 id="label">Nombre de usuario</h4>
+                        <input type="email" class="form-control" placeholder="Ingresu su rut o email " name="email" required autofocus>
+                    </div>
+                    <div class="form-group">
+                        <h4 id="label">Contraseña</h4>
+                        <input type="password" class="form-control" placeholder="Ingrese su contraseña" name="password" required>
+                    </div>
+                    <div class="text-center">
+                        <a href="iproelec-Dashboard.html"><button id="button" class="btn btn-lg" type="submit">Ingresar</button></a>
+                    </div>
+                    <div class="g-signin2" data-onsuccess="onSignIn"></div>
+
+                    <a href="#" onclick="signOut();">Sign out</a>
+
+                    <div class="checkbox ">
+                        <p class="help-block"><a href="#">Olvidó su contraseña?</a></p>
+                    </div>
+                </form>
+                <img src="http://localhost:3000/imagen/usuarios/5c241ca45778fb2508e94fc5-791.jpg?token=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c3VhcmlvIjp7InJvbGUiOiJVU0VSIiwiZXN0YWRvIjp0cnVlLCJnb29nbGUiOmZhbHNlLCJfaWQiOiI1YzI0MWNhNDU3NzhmYjI1MDhlOTRmYzUiLCJub21icmUiOiIyIiwiZW1haWwiOiIyIiwiX192IjowLCJpbWciOiI1YzI0MWNhNDU3NzhmYjI1MDhlOTRmYzUtNTMxLmpwZyJ9LCJpYXQiOjE1NDYxOTE4NjcsImV4cCI6MTU0NjM2NDY2N30.1XMEbhcjiThNKpnLgzXtGGZ4EZa46Gmmozn61SeO83E">
+
+                <form ref='uploadForm' id='uploadForm' action='http://localhost:3000/descarga' method='post' encType="multipart/form-data">
+                    <input type="file" name="tarea" />
+                    <input type="text" name="titulo" />
+                    <input type="text" name="categoria" />
+                    <input type='submit' value='Upload!' />
+                </form>
+            </div>
+        </div>
+    </div>
+
+
+</body>
+
+</html>
