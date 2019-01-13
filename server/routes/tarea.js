@@ -2,7 +2,8 @@ const express = require('express');
 const app = express();
 const Tarea = require('../models/tarea');
 const _ = require('underscore');
-
+const fs = require('fs');
+const path = require('path');
 
 // esto solo lo pdora hacer el admin
 app.get('/tarea', (req, res) => {
@@ -60,6 +61,58 @@ app.get('/tarea/:id', (req, res) => {
         });
 });
 
+// esto solo lo podra hacer el admin ver todas las tareas eliminadas revisarlas y autorizar la eliminacion por completo
+app.get('/tarea/admin/full', (req, res) => {
+
+    Tarea.find({ estado: false })
+        .populate('usuario')
+        .exec((err, tareasDB) => {
+            if (err) {
+                return res.status(500).json({
+                    ok: false,
+                    err
+                });
+            } else if (tareasDB == '') {
+                return res.status(400).json({
+                    ok: false,
+                    err: {
+                        message: 'No se encontraron tareas registradas'
+                    }
+                });
+            } else {
+                return res.status(200).json({
+                    ok: true,
+                    tareas: tareasDB
+                });
+            }
+        });
+});
+
+// esto solo lo pdora hacer el admin eliminar defitivo una tarea
+app.delete('/tarea/admin/delete/:id', (req, res) => {
+
+    let id = req.params.id;
+    Tarea.findByIdAndRemove(id, (err, tareaBorrada) => {
+
+        if (err) {
+            return res.status(500).json({
+                ok: false,
+                err
+            });
+        } else {
+            let pathArchivo = path.resolve(__dirname, `../../uploads/tareas/${tareaBorrada.tarea}`);
+            if (fs.existsSync(pathArchivo)) {
+                fs.unlinkSync(pathArchivo);
+            }
+            return res.status(200).json({
+                ok: true,
+                tarea: tareaBorrada
+            });
+        }
+    });
+});
+
+
 
 // este id lo agarro por el token
 app.get('/tarea/usuario', (req, res) => {
@@ -114,9 +167,6 @@ app.get('/tarea/usuario/:id', (req, res) => {
             }
         });
 });
-
-
-
 
 app.delete('/tarea/:id', (req, res) => {
 

@@ -12,7 +12,7 @@ app.use(fileUpload());
 // descarga
 app.post('/descarga', (req, res) => {
 
-    if (Object.keys(req.files).length == 0) {
+    if (!req.files || Object.keys(req.files).length == 0) {
         return res.status(400)
             .json({
                 ok: false,
@@ -59,7 +59,9 @@ app.post('/descarga', (req, res) => {
 app.post('/tarea', (req, res) => {
 
     let body = req.body;
-    if (Object.keys(req.files).length > 0) {
+
+    if (req.files && Object.keys(req.files).length > 0) {
+
         var archivo = req.files.tarea;
         let nombreCortado = archivo.name.split('.');
         let extension = nombreCortado[nombreCortado.length - 1];
@@ -74,6 +76,7 @@ app.post('/tarea', (req, res) => {
             });
         }
         body.tarea = `${nombreCortado[0]}-${new Date().getMilliseconds() }.${extension}`;
+
     }
 
     let tarea = new Tarea({
@@ -91,7 +94,7 @@ app.post('/tarea', (req, res) => {
                 err
             });
         }
-        if (Object.keys(req.files).length > 0) {
+        if (req.files && Object.keys(req.files).length > 0) {
             cargarArchivo(archivo, body.tarea, res, tareaDB, 'tareas');
         } else {
             return res.status(200).json({
@@ -104,14 +107,14 @@ app.post('/tarea', (req, res) => {
 
 
 // este es el put
-app.post('/tareas/:id', (req, res) => {
+app.put('/tarea/:id', (req, res) => {
 
     let body = req.body;
     let id = req.params.id;
     let id_usuario = body.usuario;
     body = _.pick(body, ['titulo', 'descripcion', 'categoria', 'fechaEntrega', 'tarea']);
 
-    if (Object.keys(req.files).length > 0) {
+    if (req.files && Object.keys(req.files).length > 0) {
         var archivo = req.files.tarea;
         let nombreCortado = archivo.name.split('.');
         let extension = nombreCortado[nombreCortado.length - 1];
@@ -143,7 +146,7 @@ app.post('/tareas/:id', (req, res) => {
                 }
             });
         }
-        if (Object.keys(req.files).length > 0) {
+        if (req.files && Object.keys(req.files).length > 0) {
             borrarArchivo(tareaDB.tarea);
             cargarArchivo(archivo, body.tarea, res, tareaDB, 'tareas');
         } else {
