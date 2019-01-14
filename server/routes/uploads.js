@@ -5,6 +5,7 @@ const Tarea = require('../models/tarea');
 const _ = require('underscore');
 const fs = require('fs');
 const path = require('path');
+const token = require('../middlewares/token');
 const fileUpload = require('express-fileupload');
 app.use(fileUpload());
 
@@ -55,8 +56,8 @@ app.post('/descarga', (req, res) => {
 });
 
 
-// POST TAREA esto lo podra hacer el usuario
-app.post('/tarea', (req, res) => {
+// USUARIO: POST TAREA esto lo podra hacer el usuario
+app.post('/tarea', token.verificaToken, (req, res) => {
 
     let body = req.body;
 
@@ -81,7 +82,7 @@ app.post('/tarea', (req, res) => {
 
     let tarea = new Tarea({
         titulo: body.titulo,
-        usuario: body.usuario,
+        usuario: req.usuario._id,
         descripcion: body.descripcion,
         categoria: body.categoria,
         fechaEntrega: body.fechaEntrega,
@@ -106,12 +107,12 @@ app.post('/tarea', (req, res) => {
 });
 
 
-// este es el put
-app.put('/tarea/:id', (req, res) => {
+// USUARIO: este es el put de la terea
+app.put('/tarea/modificar/:id', token.verificaToken, (req, res) => {
 
     let body = req.body;
     let id = req.params.id;
-    let id_usuario = body.usuario;
+    let id_usuario = req.usuario._id;
     body = _.pick(body, ['titulo', 'descripcion', 'categoria', 'fechaEntrega', 'tarea']);
 
     if (req.files && Object.keys(req.files).length > 0) {
@@ -157,6 +158,24 @@ app.put('/tarea/:id', (req, res) => {
         }
 
     });
+});
+
+// USUARIO: Descargar los archivos
+app.get('/download/:tipo/:file', token.verificaToken, (req, res) => {
+
+    let tipo = req.params.tipo;
+    let file = req.params.file;
+    // aqui buscare en la bd de tareas si el nombre del archivo coincide con el id del usuario y el id del token de la persona conectada
+    let pathFile = path.resolve(__dirname, `../../uploads/${tipo}/${file}`);
+
+    if (fs.existsSync(pathFile)) {
+        res.sendFile(pathFile);
+    } else {
+        return res.status(400).json({
+            ok: false,
+            message: 'No existe archivo'
+        })
+    }
 });
 
 

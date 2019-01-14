@@ -3,9 +3,11 @@ const app = express();
 const Usuario = require('../models/usuario');
 const bcrypt = require('bcrypt');
 const _ = require('underscore');
+const token = require('../middlewares/token');
 
-app.get('/usuario/:id', (req, res) => {
-    let id = req.params.id;
+// USUARIO: me devuelve los datos del usuario conectado.
+app.get('/usuario', token.verificaToken, (req, res) => {
+    let id = req.usuario._id;
     Usuario.findOne({ _id: id, estado: true }, (err, usuarioDB) => {
         if (err) {
             return res.status(500).json({
@@ -30,15 +32,16 @@ app.get('/usuario/:id', (req, res) => {
     });
 });
 
-
+// USUARIO: crear usuario esto no necesita token ni nada
 app.post('/usuario', (req, res) => {
-
     let body = req.body;
     bcrypt.hash(body.password, 10, function(err, hash) {
         if (err) {
             return res.status(500).json({
                 ok: false,
-                err
+                err: {
+                    message: 'Debe ingresar una contraseña'
+                }
             })
         } else {
             let usuario = new Usuario({
@@ -63,9 +66,10 @@ app.post('/usuario', (req, res) => {
     });
 });
 
-app.put('/usuario/:id', (req, res) => {
+// USUARIO. cambios que puede hacer
+app.put('/usuario/modificar', token.verificaToken, (req, res) => {
 
-    let id = req.params.id;
+    let id = req.usuario._id;
     let body = req.body;
     let usuario = _.pick(body, ['nombre', 'email', 'telefono', 'monedaPago', 'nacionalidad']);
 
@@ -91,10 +95,11 @@ app.put('/usuario/:id', (req, res) => {
     });
 });
 
-app.put('/password/:id', (req, res) => {
+//USUARIO: cambio de clave
+app.put('/password', token.verificaToken, (req, res) => {
 
     let body = req.body;
-    let id = req.params.id;
+    let id = req.usuario._id;
     if (body.password == body.rePassword) {
         bcrypt.hash(body.password, 10, function(err, hash) {
             if (err) {
@@ -135,9 +140,9 @@ app.put('/password/:id', (req, res) => {
     }
 });
 
-// esto solo lo pdora hacer el admin
-app.get('/usuario', (req, res) => {
-    Usuario.find({ estado: true }, (err, usuariosDB) => {
+// ADMIN: Me devuleve todos los usuario
+app.get('/usuario/full', [token.verificaToken, token.verificaRole], (req, res) => {
+    Usuario.find((err, usuariosDB) => {
         if (err) {
             return res.status(500).json({
                 ok: false,

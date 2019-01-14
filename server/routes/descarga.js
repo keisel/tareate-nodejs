@@ -4,6 +4,7 @@ const Descarga = require('../models/descarga');
 const _ = require('underscore');
 const fs = require('fs');
 const path = require('path');
+const token = require('../middlewares/token');
 
 
 app.get('/descarga/buscar/:termino', (req, res) => {
@@ -84,7 +85,7 @@ app.get('/descarga/:id', (req, res) => {
 
 // esto solo lo pdora hacer el admin
 // get para el admin con estado false
-app.get('/descarga/admin/full', (req, res) => {
+app.get('/descarga/admin/full', [token.verificaToken, token.verificaRole], (req, res) => {
     Descarga.find({ estado: false }, (err, tareasDB) => {
         if (err) {
             return res.status(500).json({
@@ -109,7 +110,7 @@ app.get('/descarga/admin/full', (req, res) => {
 
 // esto solo lo pdora hacer el admin
 // get con id que le devulve la tarea con estado false al admin para poder cambiarla
-app.get('/descarga/admin/:id', (req, res) => {
+app.get('/descarga/individual/:id', [token.verificaToken, token.verificaRole], (req, res) => {
     let id = req.params.id;
     Descarga.findById(id, (err, tareaDB) => {
         if (err) {
@@ -133,8 +134,8 @@ app.get('/descarga/admin/:id', (req, res) => {
     });
 });
 
-// solo la podra cambiar el admin
-app.put('/descarga/:id', (req, res) => {
+// ADMIN: solo la podra cambiar el admin
+app.put('/descarga/:id', [token.verificaToken, token.verificaRole], (req, res) => {
 
     let id = req.params.id;
     let body = req.body;
@@ -163,7 +164,7 @@ app.put('/descarga/:id', (req, res) => {
 });
 
 // esto solo lo pdora hacer el admin
-app.delete('/descarga/:id', (req, res) => {
+app.delete('/descarga/:id', [token.verificaToken, token.verificaRole], (req, res) => {
 
     let id = req.params.id;
     Descarga.findByIdAndRemove(id, (err, tareaBorrada) => {

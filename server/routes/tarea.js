@@ -4,9 +4,10 @@ const Tarea = require('../models/tarea');
 const _ = require('underscore');
 const fs = require('fs');
 const path = require('path');
+const token = require('../middlewares/token');
 
-// esto solo lo pdora hacer el admin
-app.get('/tarea', (req, res) => {
+// ADMIN: devuelve todos las tareas que sean true  
+app.get('/tarea', [token.verificaToken, token.verificaRole], (req, res) => {
 
     Tarea.find({ estado: true })
         .populate('usuario')
@@ -32,8 +33,8 @@ app.get('/tarea', (req, res) => {
         });
 });
 
-// esto solo lo pdora hacer el admin
-app.get('/tarea/:id', (req, res) => {
+// ADMIN: Devuelve una tarea pasada por id SOLO LO HACE EL ADMIN
+app.get('/tarea/individual/:id', [token.verificaToken, token.verificaRole], (req, res) => {
     let id = req.params.id;
     Tarea.findOne({ _id: id, estado: true })
         .populate('usuario')
@@ -61,8 +62,8 @@ app.get('/tarea/:id', (req, res) => {
         });
 });
 
-// esto solo lo podra hacer el admin ver todas las tareas eliminadas revisarlas y autorizar la eliminacion por completo
-app.get('/tarea/admin/full', (req, res) => {
+// ADMIN: esto solo lo podra hacer el admin ver todas las tareas eliminadas revisarlas y autorizar la eliminacion por completo
+app.get('/tarea/admin/full', [token.verificaToken, token.verificaRole], (req, res) => {
 
     Tarea.find({ estado: false })
         .populate('usuario')
@@ -89,7 +90,7 @@ app.get('/tarea/admin/full', (req, res) => {
 });
 
 // esto solo lo pdora hacer el admin eliminar defitivo una tarea
-app.delete('/tarea/admin/delete/:id', (req, res) => {
+app.delete('/tarea/admin/eliminar/:id', [token.verificaToken, token.verificaRole], (req, res) => {
 
     let id = req.params.id;
     Tarea.findByIdAndRemove(id, (err, tareaBorrada) => {
@@ -114,8 +115,8 @@ app.delete('/tarea/admin/delete/:id', (req, res) => {
 
 
 
-// este id lo agarro por el token
-app.get('/tarea/usuario', (req, res) => {
+// USUARIO: LE DEVUELVE SOLO LAS TAREAS DE EL 
+app.get('/tarea/usuario', token.verificaToken, (req, res) => {
     let id = req.usuario._id;
     Tarea.find({ usuario: id, estado: true })
         .populate('usuario')
@@ -140,8 +141,8 @@ app.get('/tarea/usuario', (req, res) => {
             }
         });
 });
-// el id por parametro es de la tarea y el id del usuario lo agarro del token
-app.get('/tarea/usuario/:id', (req, res) => {
+// USUARIO: LE DEVUELVE SOLO UNA TAREA DE EL
+app.get('/tarea/usuario/:id', token.verificaToken, (req, res) => {
     let id = req.params.id;
     let id_usuario = req.usuario._id;
     Tarea.findOne({ _id: id, usuario: id_usuario, estado: true })
@@ -168,7 +169,7 @@ app.get('/tarea/usuario/:id', (req, res) => {
         });
 });
 
-app.delete('/tarea/:id', (req, res) => {
+app.delete('/tarea/usuario/eliminar/:id', token.verificaToken, (req, res) => {
 
     let id = req.params.id;
     let id_usuario = req.usuario._id;
