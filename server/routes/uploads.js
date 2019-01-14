@@ -165,9 +165,35 @@ app.get('/download/:tipo/:file', token.verificaToken, (req, res) => {
 
     let tipo = req.params.tipo;
     let file = req.params.file;
-    // aqui buscare en la bd de tareas si el nombre del archivo coincide con el id del usuario y el id del token de la persona conectada
-    let pathFile = path.resolve(__dirname, `../../uploads/${tipo}/${file}`);
+    if (tipo == 'tareas') {
+        Tarea.findOne({ tarea: file, usuario: req.usuario._id }, (err, archivoDB) => {
+            if (err) {
+                return res.status(500).json({
+                    ok: false,
+                    err: {
+                        message: 'Archivo no encontrado'
+                    }
+                });
+            }
+            if (!archivoDB) {
+                return res.status(500).json({
+                    ok: false,
+                    err: {
+                        message: 'Archivo no encontrado'
+                    }
+                });
+            } else {
+                descargarArchivo(tipo, file, res);
+            }
+        });
+    } else {
+        descargarArchivo(tipo, file, res);
+    }
+});
 
+function descargarArchivo(tipo, file, res) {
+
+    let pathFile = path.resolve(__dirname, `../../uploads/${tipo}/${file}`);
     if (fs.existsSync(pathFile)) {
         res.sendFile(pathFile);
     } else {
@@ -176,8 +202,7 @@ app.get('/download/:tipo/:file', token.verificaToken, (req, res) => {
             message: 'No existe archivo'
         })
     }
-});
-
+}
 
 function borrarArchivo(tarea) {
 
