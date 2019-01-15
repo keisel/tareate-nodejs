@@ -32,7 +32,7 @@ let usuarioSchema = new Schema({
     },
     estado: {
         type: Boolean,
-        default: true
+        default: false
     },
     google: {
         type: Boolean,
