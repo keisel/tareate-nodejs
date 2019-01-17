@@ -8,7 +8,8 @@
     <link rel="stylesheet" type="text/css" href="assets/css/bootstrap.css">
     <link rel="icon" type="image/png" href="assets/iproelec/icon.png" sizes="196x196">
     <link rel="stylesheet" type="text/css" href="assets/css/estilos.css">
-    <meta name="google-signin-client_id" content="378657558154-akllgo7g3i6h2uv6flgqkb73icjcapog.apps.googleusercontent.com">
+
+    <meta name="google-signin-client_id" content="1090425564135-atsso83du4jdf0lcum1epkftnii1ios9.apps.googleusercontent.com">
 
     <style>
         body {
@@ -86,13 +87,38 @@
                     <input type='submit' value='Upload!' />
                 </form>
                 <a href=""></a>
-                <img src="http://localhost:3000/download/tareas/AnalisisLeche-130.pdf">
-                <a href="http://localhost:3000/download/tareas/AnalisisLeche-130.pdf">asdasd</a>
+                <div class="g-signin2" data-onsuccess="onSignIn" data-theme="dark"></div>
+
+                <a href="#" onclick="signOut();">Sign out</a>
+
             </div>
         </div>
     </div>
 
+    <script src="https://apis.google.com/js/platform.js" async defer></script>
 
+    <script>
+        function onSignIn(googleUser) {
+            var profile = googleUser.getBasicProfile();
+
+            var id_token = googleUser.getAuthResponse().id_token;
+            console.log(id_token);
+            var xhr = new XMLHttpRequest();
+            xhr.open('POST', '/google');
+            xhr.setRequestHeader('Content-Type', 'application/x-www-form-urlencoded');
+            /*xhr.onload = function() {
+                console.log('Signed in as: ' + xhr.responseText);
+            };*/
+            xhr.send('idtoken=' + id_token);
+        }
+
+        function signOut() {
+            var auth2 = gapi.auth2.getAuthInstance();
+            auth2.signOut().then(function() {
+                console.log('User signed out.');
+            });
+        }
+    </script>
 </body>
 
 </html>
