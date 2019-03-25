@@ -19,7 +19,7 @@ app.listen(process.env.PORT, (err) => {
     console.log(`Servidor corriendo en puerto ${ process.env.PORT }`);
 });
 
-mongoose.connect('mongodb://localhost:27017/tareate', { useNewUrlParser: true }, (err, res) => {
+mongoose.connect(process.env.URLDB, { useNewUrlParser: true, useCreateIndex: true }, (err, res) => {
     if (err) throw err;
     console.log('base de datos onlien');
 });
