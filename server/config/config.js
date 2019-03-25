@@ -16,10 +16,10 @@ process.env.NODE_ENV = process.env.NODE_ENV || 'dev';
 
 let urlDB;
 
-//if (process.env.NODE_ENV == 'dev') {
-// urlDB = 'mongodb://localhost:27017/tareate';
-//} else {
-urlDB = 'mongodb+srv://keisel31:keisel31@cluster0-ksiiq.mongodb.net/tareate';
-//}
+if (process.env.NODE_ENV == 'dev') {
+    urlDB = 'mongodb://localhost:27017/tareate';
+} else {
+    urlDB = 'mongodb+srv://keisel31:keisel31@cluster0-ksiiq.mongodb.net/tareate';
+}
 
 process.env.URLDB = urlDB;
